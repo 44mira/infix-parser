@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <memory>
 
 using namespace std;
 
@@ -29,10 +30,11 @@ struct token {
  */
 enum NODE_TYPES { NUMERIC, OPERATOR };
 struct node {
-  type_data type;
-  int value;
-  node &left;
-  node &right;
+  token value;
+  unique_ptr<node> left;
+  unique_ptr<node> right;
+
+  node(token t) : value(t), left(nullptr), right(nullptr) {};
 };
 
 /**
@@ -60,3 +62,47 @@ void evaluateLoop(void);
  * @ret the tokens for parsing
  */
 vector<token> lexer(const string expression);
+
+/**
+ * Parses an expression based on the grammar rule: 
+ *  expression : term { PRECEDENCE_1 term } .
+ * 
+ * @param tokens The vector of tokens representing the input expression
+ * @param currentToken Reference to the index of the current token being processed
+ * @return The result of the parsed expression.
+ */
+unique_ptr<node> parseExpression(const vector<token>& tokens, size_t& currentToken);
+
+/**
+ * Parses an term based on the grammar rule: 
+ * term : factor { PRECENDENCE_2 factor } .
+ * 
+ * @param tokens The vector of tokens representing the input expression
+ * @param currentToken Reference to the index of the current token being processed
+ * @return The result of the parsed term.
+ */
+unique_ptr<node> parseTerm(const vector<token>& tokens, size_t& currentToken);
+
+/**
+ * Parses an expression based on the grammar rule: 
+ * factor : NUMBER | "(" expression ")" .
+ * 
+ * @param tokens The vector of tokens representing the input expression
+ * @param currentToken Reference to the index of the current token being processed
+ * @return The result of the parsed factor.
+ */
+unique_ptr<node> parseFactor(const vector<token>& tokens, size_t& currentToken);
+
+/**
+ * Print inorder traversal of the expression tree.
+ * 
+ * @param root pointer to the root of the expression tree.
+ */
+void displayTreeInfix(const unique_ptr<node>& root);
+
+/**
+ * Print postorder traversal of the expression tree.
+ * 
+ * @param root pointer to the root of the expression tree.
+ */
+void displayTreePostfix(const unique_ptr<node>& root);
