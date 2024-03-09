@@ -23,7 +23,9 @@
  */
 
 #include <iostream>
-#include <vector>
+#include <string>
+
+using namespace std;
 
 enum TYPES { Numeric, Operator };
 typedef int type_data;
@@ -43,4 +45,21 @@ struct node {
   node &right;
 };
 
+/**
+ * Removes spaces from the input expression as the grammar deals by character.
+ * Uses string to hold tokens as they're equivalent to arrays of characters.
+ *
+ * @param expression The expression to be lexed (filtered for spaces)
+ * @ret the tokens for parsing
+ */
+string lexer(const string expression);
+
 int main(void) {}
+
+string lexer(const string expression) {
+  string tokens = "";
+  for (char token : expression)
+    if (token != ' ')
+      tokens += token;
+  return tokens;
+}
