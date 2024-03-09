@@ -1,3 +1,6 @@
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -81,7 +84,7 @@ vector<token> lexer(const string expr);
 unique_ptr<node> parseExpression(const vector<token>& tokens, size_t& currentToken);
 
 /**
- * Parses an term based on the grammar rule: 
+ * Parses a term based on the grammar rule: 
  * term : factor { PRECENDENCE_2 factor } .
  * 
  * @param tokens The vector of tokens representing the input expression
@@ -113,3 +116,5 @@ void displayTreeInfix(const unique_ptr<node>& root);
  * @param root pointer to the root of the expression tree.
  */
 void displayTreePostfix(const unique_ptr<node>& root);
+
+#endif // DEFINITIONS_H
