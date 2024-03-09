@@ -37,7 +37,7 @@ vector<token> lexer(const string expr) {
       tokens.push_back({CLOSE_PRN, ")"});
       break;
     default:
-      tokens.push_back({ERROR, ""});
+      throw "Invalid token encountered.";
     }
   }
 
