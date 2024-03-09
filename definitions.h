@@ -68,6 +68,8 @@ void evaluateLoop(void);
 /**
  * Converts the string expression to its corresponding `token` structs.
  *
+ * Throws an error on invalid token.
+ *
  * @param expression The expression to be lexed (filtered for spaces)
  * @ret the tokens for parsing
  */
