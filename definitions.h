@@ -13,7 +13,7 @@ typedef char choice;
  *
  * these tokens correspond to terminal types in the grammar.
  */
-enum TOKEN_TYPES { NUMBER, PRECEDENCE_1, PRECEDENCE_2 };
+enum TOKEN_TYPES { NUMBER, PRECEDENCE_1, PRECEDENCE_2, OPEN_PRN, CLOSE_PRN };
 struct token {
   token_type type;
   string value;

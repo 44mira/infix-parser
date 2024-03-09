@@ -17,7 +17,7 @@
  *
  * expression : term { PRECEDENCE_1 term } .
  * term : factor { PRECENDENCE_2 factor } .
- * factor : NUMBER | "(" expression ")" .
+ * factor : NUMBER | OPEN_PRN expression CLOSE_PRN .
  */
 
 #include "definitions.h"
@@ -95,5 +95,12 @@ void evaluateLoop(void) {
     cin >> exit;
     if (toupper(exit) == EXIT)
       return;
+  }
+}
+
+vector<token> lexer(const string expression) {
+  for (int i = 0; i < expression; i++) {
+
+    expression[i]
   }
 }
