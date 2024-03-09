@@ -12,14 +12,12 @@
  * - braces `{ }` mean 0 or more
  * - brackets `[ ]` mean 0 or 1
  * - colon `:` means definition
- * - quoted tokens `" "` is a terminal definition
+ * - quoted tokens `" "` and CAPITALIZED are terminal definitions
  * - dot `.` means the end of a definition
  *
- * expression : term { ("+" | "-") term } .
- * term : factor { ("*" | "/" | "%") factor } .
- * factor : numeric | "(" expression ")" .
- * digit : "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" .
- * numeric : { digit } digit .
+ * expression : term { PRECEDENCE_1 term } .
+ * term : factor { PRECENDENCE_2 factor } .
+ * factor : NUMBER | "(" expression ")" .
  */
 
 #include <algorithm>
@@ -32,19 +30,30 @@
 using namespace std;
 
 enum MENU_CHOICES { EXIT = 'X', PROG_DESC = 'P', EVALUATE = 'E' };
-enum TYPES { Numeric, Operator };
+typedef int token_type;
 typedef int type_data;
 typedef char choice;
-typedef string token;
+
+/**
+ * `token` type that is what the lexer returns.
+ *
+ * these tokens correspond to terminal types in the grammar.
+ */
+enum TOKEN_TYPES { NUMBER, PRECEDENCE_1, PRECEDENCE_2 };
+struct token {
+  token_type type;
+  string value;
+};
 
 /**
  * `node` type that can be either `Numeric `or `Operator`
  *
  * No methods because only limited to procedural code.
  *
- * `Numeric` types hold a value but not a left and right node.
- * `Operator` types hold a left and right node but not a value.
+ * `Numeric` types hold a value but no children nodes.
+ * `Operator` types hold a value, and children nodes.
  */
+enum NODE_TYPES { NUMERIC, OPERATOR };
 struct node {
   type_data type;
   int value;
@@ -129,14 +138,6 @@ void programDescription(void) {
           "Tyrael: Code structure setup, infix to postfix conversion\n"
           "Sharmaigne: Input validation, postfix expression evaluation\n\n"
           "\t\t============================\n\n";
-}
-
-string lexer(const string expression) {
-  string tokens = "";
-  for (char token : expression)
-    if (!isspace(token))
-      tokens += token;
-  return tokens;
 }
 
 void evaluateLoop(void) {
