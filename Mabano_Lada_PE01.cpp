@@ -101,6 +101,8 @@ void evaluateLoop(void) {
 vector<token> lexer(const string expr) {
   vector<token> tokens;
   for (int i = 0; i < expr.length(); i++) {
+    if (isspace(expr[i]))
+      continue;
 
     if (isdigit(expr[i])) {
       string number = "";
