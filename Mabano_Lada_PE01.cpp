@@ -23,12 +23,11 @@
  */
 
 #include <algorithm>
-#include <cctype>   // toUpper
+#include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdlib.h> // for clearing
-#include <stack>
+#include <stdlib.h>
 
 using namespace std;
 
