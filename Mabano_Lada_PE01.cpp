@@ -22,6 +22,7 @@
  * numeric : { digit } (digit | "0") .
  */
 
+#include <cctype>
 #include <iostream>
 #include <string>
 
@@ -59,7 +60,7 @@ int main(void) {}
 string lexer(const string expression) {
   string tokens = "";
   for (char token : expression)
-    if (token != ' ')
+    if (!isspace(token))
       tokens += token;
   return tokens;
 }
