@@ -14,7 +14,14 @@ typedef char choice;
  *
  * these tokens correspond to terminal types in the grammar.
  */
-enum TOKEN_TYPES { NUMBER, PRECEDENCE_1, PRECEDENCE_2 };
+enum TOKEN_TYPES {
+  ERROR,
+  NUMBER,
+  PRECEDENCE_1,
+  PRECEDENCE_2,
+  OPEN_PRN,
+  CLOSE_PRN
+};
 struct token {
   token_type type;
   string value;
@@ -61,7 +68,7 @@ void evaluateLoop(void);
  * @param expression The expression to be lexed (filtered for spaces)
  * @ret the tokens for parsing
  */
-vector<token> lexer(const string expression);
+vector<token> lexer(const string expr);
 
 /**
  * Parses an expression based on the grammar rule: 
