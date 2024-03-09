@@ -51,7 +51,7 @@ void lexer_tests() {
     asserted = {{OPEN_PRN, "("}, {CLOSE_PRN, ")"}};
     tested = lexer("( )");
     assert(compare_tokens(asserted, tested),
-           "Lexer can tokenize an parentheses and space");
+           "Lexer can tokenize a parentheses and space");
 
     asserted = {{NUMBER, "34"}, {PRECEDENCE_1, "+"}, {NUMBER, "35"}};
     tested = lexer("34 + 35");
