@@ -25,19 +25,17 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <stdlib.h>
 #include <string>
 #include <vector>
-#include <stdlib.h>
 
 using namespace std;
 
+enum MENU_CHOICES { EXIT = 'X', PROG_DESC = 'P', EVALUATE = 'E' };
 enum TYPES { Numeric, Operator };
 typedef int type_data;
-
-enum MENU_CHOICES { EXIT = 'X', PROG_DESC = 'P', EVALUATE = 'E' };
-
-#define choice char
-#define token string
+typedef char choice;
+typedef string token;
 
 /**
  * `node` type that can be either `Numeric `or `Operator`
@@ -82,23 +80,23 @@ void evaluateLoop(void);
 string lexer(const string expression);
 
 int main(void) {
-	bool running = true;
+  bool running = true;
 
-	while (running) {
-		switch (menu()) {
-			case PROG_DESC:
-        programDescription();
-        break;
-			case EVALUATE:
-        evaluateLoop();
-        break;
-			case EXIT:
-        running = false;
-        break;
-			default:
-        cout << "\nInvalid input, try again.\n";
-		}
-	}
+  while (running) {
+    switch (menu()) {
+    case PROG_DESC:
+      programDescription();
+      break;
+    case EVALUATE:
+      evaluateLoop();
+      break;
+    case EXIT:
+      running = false;
+      break;
+    default:
+      cout << "\nInvalid input, try again.\n";
+    }
+  }
   return 0;
 }
 
@@ -126,12 +124,11 @@ void programDescription(void) {
           "- [E] Evaluate Expression(s): Takes an infix expression as input "
           "and displays its equivalent postfix expression and its result.\n"
           "- [X] Exit: Terminates the program.\n\n=====\n"
-          
+
           "Work distribution:\n"
           "Tyrael: Code structure setup, infix to postfix conversion\n"
           "Sharmaigne: Input validation, postfix expression evaluation\n\n"
           "\t\t============================\n\n";
-
 }
 
 string lexer(const string expression) {
@@ -143,20 +140,20 @@ string lexer(const string expression) {
 }
 
 void evaluateLoop(void) {
-	string expr;
-	choice exit;
-	while (true) {
-		cout << "\n Input an infix expression: ";
-		cin.ignore();
-		getline(cin, expr);
+  string expr;
+  choice exit;
+  while (true) {
+    cout << "\n Input an infix expression: ";
+    cin.ignore();
+    getline(cin, expr);
 
-		cout << "\nDo you want to evaluate another expression?\n\n"
-						"[X] NO\n"
-						"[other] YES\n"
-						"Choice: ";
+    cout << "\nDo you want to evaluate another expression?\n\n"
+            "[X] NO\n"
+            "[other] YES\n"
+            "Choice: ";
 
-		cin >> exit;
-		if (toupper(exit) == EXIT)
-			return;
-	}
+    cin >> exit;
+    if (toupper(exit) == EXIT)
+      return;
+  }
 }
