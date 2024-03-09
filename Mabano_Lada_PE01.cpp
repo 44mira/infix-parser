@@ -90,6 +90,9 @@ void evaluateLoop(void) {
     size_t currentToken = 0;
     unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
+    cout << "Postfix expression: ";
+    displayTreePostfix(root);
+
     cout << "\nDo you want to evaluate another expression?\n\n"
             "[X] NO\n"
             "[other] YES\n"
