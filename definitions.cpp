@@ -1,4 +1,5 @@
 #include "definitions.h"
+#include <memory>
 
 using namespace std;
 
@@ -48,8 +49,6 @@ vector<token> lexer(const string expr) {
   return tokens;
 }
 
-/* TODO: WRITE PARSER FUNCTIONS DEFINITIONS HERE */
-
 unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index) {
   
   if (tokens[index++].type != OPEN_PRN) throw invalid_argument("Mismatched parentheses.");
@@ -66,17 +65,40 @@ unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index) {
     ope -> right = std::move(nextTerm);
     
     termNode = std::move(ope);
-    index++
   }
 
-  if (tokens[index].type == CLOSE_PRN)
+  if (tokens[index++].type == CLOSE_PRN)
     return termNode;
   throw "Mismatched parentheses.";
 }
 
 unique_ptr<node> parseTerm(vector<token> &tokens, size_t &index) {
   
+  // parse the current factor
+  unique_ptr<node> factorNode = parseFactor(tokens, index);
 
+  // parse the { PRECEDENCE_2 factor }
+  while (tokens[index].type == PRECEDENCE_2) {
+    unique_ptr<node> ope;
+    ope -> tok = tokens[index++];
+    ope -> left = std::move(factorNode);
+    unique_ptr<node> nextTerm = parseFactor(tokens, index);
+    ope -> right = std::move(nextTerm);
+
+    factorNode = std::move(ope);
+  }
+  
+  return factorNode;
+}
+
+unique_ptr<node> parseFactor(vector<token> &tokens, size_t &index) {
+  if (tokens[index].type == NUMBER) {
+    unique_ptr<node> num;
+    num -> tok = tokens[index++];
+    return num;
+  }
+
+  return parseExpression(tokens, index);
 }
 
 string displayTreeInfix(const unique_ptr<node> &root) {

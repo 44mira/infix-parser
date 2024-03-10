@@ -110,6 +110,19 @@ unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index);
 unique_ptr<node> parseTerm(vector<token> &tokens, size_t &index);
 
 /**
+ * Attempt to parse based on the following grammar rule:
+ *
+ * > factor : NUMBER | expression .
+ *
+ * @param tokens The tokens to be parsed
+ * @param index The current index used in recursion
+ * @return the expression node to be used in the AST
+ * 
+ * @throws `Invalid infix notation`
+ */
+unique_ptr<node> parseFactor(vector<token> &tokens, size_t &index);
+
+/**
  * Returns postfix expression as a string.
  *
  * @param root pointer to the root of the expression tree.
