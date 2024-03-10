@@ -81,41 +81,7 @@ void evaluateLoop(void);
  */
 vector<token> lexer(const string expr);
 
-/**
- * Parses an expression based on the grammar rule:
- * expression : term { PRECEDENCE_1 term } .
- *
- * @param tokens The vector of tokens representing the input expression
- * @param currentToken Reference to the index of the current token being
- * processed
- * @return The result of the parsed expression.
- */
-unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentToken);
-
-/**
- * Parses a term based on the grammar rule:
- * term : factor { PRECENDENCE_2 factor } .
- *
- * @param tokens The vector of tokens representing the input expression
- * @param currentToken Reference to the index of the current token being
- * processed
- * @return The result of the parsed term.
- */
-unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken);
-
-/**
- * Parses an expression based on the grammar rule:
- * factor : NUMBER | OPEN_PRN expression CLOSE_PRN .
- *
- * @param tokens The vector of tokens representing the input expression
- * @param currentToken Reference to the index of the current token being
- * processed
- * @return The result of the parsed factor.
- *
- * @throws invalid_argument Thrown when mismatched parentheses are found or
- * consecutive operators are found.
- */
-unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken);
+/* TO DO: WRITE PARSER FUNCTIONS DECLARATIONS HERE */
 
 /**
  * Returns postfix expression as a string.

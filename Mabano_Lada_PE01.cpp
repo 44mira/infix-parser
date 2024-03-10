@@ -90,13 +90,13 @@ void evaluateLoop(void) {
       cout << "\nInput an infix expression: ";
       getline(cin, expr);
       size_t currentToken = 0;
-      unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
+      // unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
-      cout << "\nPostfix expression: " << displayTreePostfix(root);
+      // cout << "\nPostfix expression: " << displayTreePostfix(root);
       cout << "\nResult of evaluation: ";
       
       try {
-        cout << evaluatePostfix(root);
+        // cout << evaluatePostfix(root);
       } catch (invalid_argument& e) {
         cout << e.what();
       }
