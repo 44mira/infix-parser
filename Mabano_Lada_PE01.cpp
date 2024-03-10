@@ -1,5 +1,6 @@
 /**
  * Legolas Tyrael B. Lada | 2022-04734
+ * Sharmaigne Angelie C. Mabano | 2022-03464
  * 2-BSCS
  *
  * An infix to postfix evaluator using a parse tree.
