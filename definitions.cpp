@@ -6,7 +6,7 @@ using namespace std;
 vector<token> lexer(const string expr) {
   vector<token> tokens;
   tokens.push_back({OPEN_PRN, "("});        // All expressions are enclosed by parentheses
-  for (int i = 0; i < expr.length(); i++) {
+  for (long unsigned i = 0; i < expr.length(); i++) {
     if (isspace(expr[i]))
       continue;
 
@@ -49,7 +49,7 @@ vector<token> lexer(const string expr) {
   return tokens;
 }
 
-unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index) {
+unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &index) {
   
   if (tokens[index++].type != OPEN_PRN) throw invalid_argument("Mismatched parentheses.");
 
@@ -58,7 +58,7 @@ unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index) {
 
   // parse the { PRECEDENCE_1 term }
   while (tokens[index].type == PRECEDENCE_1) {
-    unique_ptr<node> ope;
+    unique_ptr<node> ope = make_unique<node>();
     ope -> tok = tokens[index++];
     ope -> left = std::move(termNode);
     unique_ptr<node> nextTerm = parseTerm(tokens, index);
@@ -69,17 +69,17 @@ unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index) {
 
   if (tokens[index++].type == CLOSE_PRN)
     return termNode;
-  throw "Mismatched parentheses.";
+  throw invalid_argument("Mismatched parentheses.");
 }
 
-unique_ptr<node> parseTerm(vector<token> &tokens, size_t &index) {
+unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &index) {
   
   // parse the current factor
   unique_ptr<node> factorNode = parseFactor(tokens, index);
 
   // parse the { PRECEDENCE_2 factor }
   while (tokens[index].type == PRECEDENCE_2) {
-    unique_ptr<node> ope;
+    unique_ptr<node> ope = make_unique<node>();
     ope -> tok = tokens[index++];
     ope -> left = std::move(factorNode);
     unique_ptr<node> nextTerm = parseFactor(tokens, index);
@@ -91,9 +91,9 @@ unique_ptr<node> parseTerm(vector<token> &tokens, size_t &index) {
   return factorNode;
 }
 
-unique_ptr<node> parseFactor(vector<token> &tokens, size_t &index) {
+unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &index) {
   if (tokens[index].type == NUMBER) {
-    unique_ptr<node> num;
+    unique_ptr<node> num = make_unique<node>();
     num -> tok = tokens[index++];
     return num;
   }

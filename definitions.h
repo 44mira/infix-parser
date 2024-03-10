@@ -45,10 +45,6 @@ struct node {
   token tok;
   unique_ptr<node> left;
   unique_ptr<node> right;
-
-  /* TO DO: am i really not allowed to use a constructor? remove unique_ptr use
-   */
-  node(token &t) : tok(t), left(nullptr), right(nullptr){};
 };
 
 /**
@@ -94,7 +90,7 @@ vector<token> lexer(const string expr);
  * 
  * @throws `Invalid infix notation`
  */
-unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index);
+unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &index);
 
 /**
  * Attempt to parse based on the following grammar rule:
@@ -107,7 +103,7 @@ unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index);
  * 
  * @throws `Invalid infix notation`
  */
-unique_ptr<node> parseTerm(vector<token> &tokens, size_t &index);
+unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &index);
 
 /**
  * Attempt to parse based on the following grammar rule:
@@ -120,7 +116,7 @@ unique_ptr<node> parseTerm(vector<token> &tokens, size_t &index);
  * 
  * @throws `Invalid infix notation`
  */
-unique_ptr<node> parseFactor(vector<token> &tokens, size_t &index);
+unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &index);
 
 /**
  * Returns postfix expression as a string.

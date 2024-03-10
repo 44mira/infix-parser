@@ -59,6 +59,7 @@ choice menu(void) {
           "[X] Exit\n"
           "\nChoice: ";
   cin >> ret;
+  cin.ignore(1000, '\n');
 
   return toupper(ret); /* lowercase versions of P E X should be valid */
 }
@@ -89,10 +90,10 @@ void evaluationLoop(void) {
       cout << "\nInput an infix expression: ";
       getline(cin, expr);
       size_t currentToken = 0;
-      // unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
+      unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
-      // cout << "\nPostfix expression: " << displayTreePostfix(root);
-      cout << "\nResult of evaluation: ";
+      cout << "\nPostfix expression: " << displayTreePostfix(root);
+      // cout << "\nResult of evaluation: ";
       
       try {
         // cout << evaluatePostfix(root);
@@ -106,6 +107,7 @@ void evaluationLoop(void) {
               "\nChoice: ";
 
       cin >> exit;
+      cin.ignore(1000, '\n');
       if (toupper(exit) == EXIT)
         return;
     } catch(invalid_argument& e) {
