@@ -16,9 +16,9 @@
  * - quoted tokens `" "` and CAPITALIZED are terminal definitions
  * - dot `.` means the end of a definition
  *
- * expression : term { PRECEDENCE_1 term } .
+ * expression : OPEN_PRN term { PRECEDENCE_1 term } CLOSE_PRN.
  * term : factor { PRECENDENCE_2 factor } .
- * factor : NUMBER | OPEN_PRN expression CLOSE_PRN .
+ * factor : NUMBER | expression .
  */
 
 #include "definitions.h"
