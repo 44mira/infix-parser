@@ -56,7 +56,8 @@ unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentTok
     token op = tokens[currentToken++];
 
     unique_ptr<node> rightOperand = parseTerm(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(node{op, nullptr, nullptr});
+    unique_ptr<node> newNode = make_unique<node>();
+    newNode->tok = op;
     newNode->left = std::move(currentTerm);
     newNode->right = std::move(rightOperand);
     currentTerm = std::move(newNode);
@@ -74,7 +75,8 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
     token op = tokens[currentToken++];
 
     unique_ptr<node> rightOperand = parseFactor(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(node{op, nullptr, nullptr});
+    unique_ptr<node> newNode = make_unique<node>();
+    newNode->tok = op;
     newNode->left = std::move(leftOperand);
     newNode->right = std::move(rightOperand);
     leftOperand = std::move(newNode);
@@ -102,7 +104,9 @@ unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) 
   /* case: factor : NUMBER */
   else if (currentToken < tokens.size() && tokens[currentToken].type == NUMBER) {
     token numberToken = tokens[currentToken++];
-    return make_unique<node>(numberToken);
+    unique_ptr<node> numberPointer = make_unique<node>();
+    numberPointer->tok = numberToken;
+    return numberPointer;
   } else {
     /* handle invalid factor */
     throw invalid_argument("Cannot have two consecutive operators.");
