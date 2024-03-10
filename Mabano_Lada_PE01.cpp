@@ -26,7 +26,6 @@
 #include <iostream>
 #include <string>
 #include <memory>
-#include "definitions.cpp"
 
 using namespace std;
 

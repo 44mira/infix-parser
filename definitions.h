@@ -45,10 +45,6 @@ struct node {
   token tok;
   unique_ptr<node> left;
   unique_ptr<node> right;
-
-  /* TO DO: am i really not allowed to use a constructor? remove unique_ptr use
-   */
-  node(token &t) : tok(t), left(nullptr), right(nullptr){};
 };
 
 /**

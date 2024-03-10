@@ -48,7 +48,7 @@ vector<token> lexer(const string expr) {
 
 unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentToken) {
   /* expression : term { PRECEDENCE_1 term } . */
-  unique_ptr<node> leftOperand = parseTerm(tokens, currentToken);
+  unique_ptr<node> currentTerm = parseTerm(tokens, currentToken);
 
   while (currentToken < tokens.size() &&
          tokens[currentToken].type == PRECEDENCE_1) {
@@ -56,12 +56,13 @@ unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentTok
     token op = tokens[currentToken++];
 
     unique_ptr<node> rightOperand = parseTerm(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(op);
-    newNode->left = std::move(leftOperand);
+    unique_ptr<node> newNode = make_unique<node>(node{op, nullptr, nullptr});
+    newNode->left = std::move(currentTerm);
     newNode->right = std::move(rightOperand);
-    leftOperand = std::move(newNode);
+    currentTerm = std::move(newNode);
   }
-  return leftOperand;
+
+  return currentTerm;
 }
 
 unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
@@ -73,7 +74,7 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
     token op = tokens[currentToken++];
 
     unique_ptr<node> rightOperand = parseFactor(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(op);
+    unique_ptr<node> newNode = make_unique<node>(node{op, nullptr, nullptr});
     newNode->left = std::move(leftOperand);
     newNode->right = std::move(rightOperand);
     leftOperand = std::move(newNode);
@@ -82,7 +83,7 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
 }
 
 unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) {
-  /* case: factor : OPEN_PRN expression CLOSE_PRN */
+  /* case: factor : NUMBER | OPEN_PRN expression CLOSE_PRN */
   if (currentToken < tokens.size() && tokens[currentToken].type == OPEN_PRN) {
     ++currentToken; /* consume OPEN_PRN token */
 
