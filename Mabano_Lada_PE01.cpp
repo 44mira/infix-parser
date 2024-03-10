@@ -16,9 +16,9 @@
  * - quoted tokens `" "` and CAPITALIZED are terminal definitions
  * - dot `.` means the end of a definition
  *
- * expression : term { PRECEDENCE_1 term } .
+ * expression : OPEN_PRN term { PRECEDENCE_1 term } CLOSE_PRN.
  * term : factor { PRECENDENCE_2 factor } .
- * factor : NUMBER | OPEN_PRN expression CLOSE_PRN .
+ * factor : NUMBER | expression .
  */
 
 #include "definitions.h"
@@ -38,7 +38,7 @@ int main(void) {
       programDescription();
       break;
     case EVALUATE:
-      evaluateLoop();
+      evaluationLoop();
       break;
     case EXIT:
       running = false;
@@ -59,7 +59,7 @@ choice menu(void) {
           "[X] Exit\n"
           "\nChoice: ";
   cin >> ret;
-  cin.ignore(numeric_limits<streamsize>::max(), '\n'); /* ignore the rest of the input stream */
+  cin.ignore(1000, '\n');
 
   return toupper(ret); /* lowercase versions of P E X should be valid */
 }
@@ -68,30 +68,33 @@ void programDescription(void) {
   cout << "\n\n\t\t==== PROGRAM DESCRIPTION ====\n\n"
           "Legolas Tyrael B. Lada       | 2022-04734\n"
           "Sharmaigne Angelie C. Mabano | 2022-03464\n"
-          "March 05, 2024 - March 09, 2024\n=====\nMenu Descriptions:\n\n"
-
+          "March 05, 2024 - March 09, 2024\n=====\n"
+          "Menu Descriptions:\n\n"
           "- [P] Program Description: Prints out the program description to "
           "stdout.\n"
           "- [E] Evaluate Expression(s): Takes an infix expression as input "
           "and displays its equivalent postfix expression and its result.\n"
-          "- [X] Exit: Terminates the program.\n\n=====\n"
-
+          "- [X] Exit: Terminates the program.\n"
+          "\n=====\n"
           "Work distribution:\n"
           "Tyrael: code structure setup, grammar, lexer, testing suite\n"
           "Sharmaigne: input validation, parser, evaluator\n\n"
           "\t\t============================\n\n";
 }
 
-void evaluateLoop(void) {
+void evaluationLoop(void) {
   string expr;
   choice exit;
   while (true) {
     try {
       cout << "\nInput an infix expression: ";
       getline(cin, expr);
+      vector<token> tokens = lexer(expr);
       size_t currentToken = 0;
-      unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
+      unique_ptr<node> root = parseExpression(tokens, currentToken);
 
+      if (currentToken != tokens.size()) 
+        throw invalid_argument("Mismatch parentheses");
       cout << "\nPostfix expression: " << displayTreePostfix(root);
       cout << "\nResult of evaluation: ";
       
@@ -107,11 +110,11 @@ void evaluateLoop(void) {
               "\nChoice: ";
 
       cin >> exit;
+      cin.ignore(1000, '\n');
       if (toupper(exit) == EXIT)
         return;
-    } catch(invalid_argument& e) {
-      cout << "Invalid Input: ";
-      cerr << e.what();
+    } catch(invalid_argument &e) {
+      cout << "Invalid infix expression: ";
       cout << "\nPlease try again." << '\n';
     }
     

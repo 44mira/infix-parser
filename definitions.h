@@ -45,10 +45,6 @@ struct node {
   token tok;
   unique_ptr<node> left;
   unique_ptr<node> right;
-
-  /* TO DO: am i really not allowed to use a constructor? remove unique_ptr use
-   */
-  node(token &t) : tok(t), left(nullptr), right(nullptr){};
 };
 
 /**
@@ -67,7 +63,7 @@ void programDescription(void);
  * Enter the loop for evaluating expressions.
  * Exit back to `main` on 'X' or invalid expression.
  */
-void evaluateLoop(void);
+void evaluationLoop(void);
 
 /**
  * Converts the string expression to its corresponding `token` structs.
@@ -81,41 +77,46 @@ void evaluateLoop(void);
  */
 vector<token> lexer(const string expr);
 
-/**
- * Parses an expression based on the grammar rule:
- * expression : term { PRECEDENCE_1 term } .
- *
- * @param tokens The vector of tokens representing the input expression
- * @param currentToken Reference to the index of the current token being
- * processed
- * @return The result of the parsed expression.
- */
-unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentToken);
+/* TODO: WRITE PARSER FUNCTIONS DECLARATIONS HERE */
 
 /**
- * Parses a term based on the grammar rule:
- * term : factor { PRECENDENCE_2 factor } .
+ * Attempt to parse based on the following grammar rule:
  *
- * @param tokens The vector of tokens representing the input expression
- * @param currentToken Reference to the index of the current token being
- * processed
- * @return The result of the parsed term.
+ * > expression : OPEN_PRN term { PRECEDENCE_1 term } CLOSE_PRN .
+ *
+ * @param tokens The tokens to be parsed
+ * @param index The current index used in recursion
+ * @return the expression node to be used in the AST
+ * 
+ * @throws `Invalid infix notation`
  */
-unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken);
+unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &index);
 
 /**
- * Parses an expression based on the grammar rule:
- * factor : NUMBER | OPEN_PRN expression CLOSE_PRN .
+ * Attempt to parse based on the following grammar rule:
  *
- * @param tokens The vector of tokens representing the input expression
- * @param currentToken Reference to the index of the current token being
- * processed
- * @return The result of the parsed factor.
+ * > term : factor { PRECEDENCE_2 factor } .
  *
- * @throws invalid_argument Thrown when mismatched parentheses are found or
- * consecutive operators are found.
+ * @param tokens The tokens to be parsed
+ * @param index The current index used in recursion
+ * @return the expression node to be used in the AST
+ * 
+ * @throws `Invalid infix notation`
  */
-unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken);
+unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &index);
+
+/**
+ * Attempt to parse based on the following grammar rule:
+ *
+ * > factor : NUMBER | expression .
+ *
+ * @param tokens The tokens to be parsed
+ * @param index The current index used in recursion
+ * @return the expression node to be used in the AST
+ * 
+ * @throws `Invalid infix notation`
+ */
+unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &index);
 
 /**
  * Returns postfix expression as a string.

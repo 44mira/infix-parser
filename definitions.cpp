@@ -1,10 +1,12 @@
 #include "definitions.h"
+#include <memory>
 
 using namespace std;
 
 vector<token> lexer(const string expr) {
   vector<token> tokens;
-  for (int i = 0; i < expr.length(); i++) {
+  tokens.push_back({OPEN_PRN, "("});        // All expressions are enclosed by parentheses
+  for (long unsigned i = 0; i < expr.length(); i++) {
     if (isspace(expr[i]))
       continue;
 
@@ -42,74 +44,61 @@ vector<token> lexer(const string expr) {
       throw invalid_argument("Invalid token encountered.");
     }
   }
-
+  
+  tokens.push_back({CLOSE_PRN, ")"});
   return tokens;
 }
 
-unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentToken) {
-  /* expression : term { PRECEDENCE_1 term } . */
-  unique_ptr<node> leftOperand = parseTerm(tokens, currentToken);
+unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &index) {
+  
+  if (tokens[index++].type != OPEN_PRN) throw invalid_argument("Mismatched parentheses.");
 
-  while (currentToken < tokens.size() &&
-         tokens[currentToken].type == PRECEDENCE_1) {
-    /* get the operation (+|-) */
-    token op = tokens[currentToken++];
+  // parse the current term
+  unique_ptr<node> termNode = parseTerm(tokens, index);
 
-    unique_ptr<node> rightOperand = parseTerm(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(op);
-    newNode->left = std::move(leftOperand);
-    newNode->right = std::move(rightOperand);
-    leftOperand = std::move(newNode);
+  // parse the { PRECEDENCE_1 term }
+  while (tokens[index].type == PRECEDENCE_1) {
+    unique_ptr<node> ope = make_unique<node>();
+    ope -> tok = tokens[index++];
+    ope -> left = std::move(termNode);
+    unique_ptr<node> nextTerm = parseTerm(tokens, index);
+    ope -> right = std::move(nextTerm);
+    
+    termNode = std::move(ope);
   }
-  return leftOperand;
+
+  if (tokens[index++].type == CLOSE_PRN)
+    return termNode;
+  throw invalid_argument("Mismatched parentheses.");
 }
 
-unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
-  /* term : factor { PRECEDENCE_2 factor } . */
-  unique_ptr<node> leftOperand = parseFactor(tokens, currentToken);
+unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &index) {
+  
+  // parse the current factor
+  unique_ptr<node> factorNode = parseFactor(tokens, index);
 
-  while (currentToken < tokens.size() &&
-         tokens[currentToken].type == PRECEDENCE_2) {
-    /* get the operation (*|/|%) */
-    token op = tokens[currentToken++];
+  // parse the { PRECEDENCE_2 factor }
+  while (tokens[index].type == PRECEDENCE_2) {
+    unique_ptr<node> ope = make_unique<node>();
+    ope -> tok = tokens[index++];
+    ope -> left = std::move(factorNode);
+    unique_ptr<node> nextTerm = parseFactor(tokens, index);
+    ope -> right = std::move(nextTerm);
 
-    unique_ptr<node> rightOperand = parseFactor(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(op);
-    newNode->left = std::move(leftOperand);
-    newNode->right = std::move(rightOperand);
-    leftOperand = std::move(newNode);
+    factorNode = std::move(ope);
   }
-  return leftOperand;
+  
+  return factorNode;
 }
 
-unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) {
-  /* case: factor : OPEN_PRN expression CLOSE_PRN */
-  if (currentToken < tokens.size() &&
-      tokens[currentToken].type == OPEN_PRN) {
-    ++currentToken; /* consume OPEN_PRN token */
-
-    unique_ptr<node> expression = parseExpression(tokens, currentToken);
-
-    /* valid factor of case */
-    if (currentToken < tokens.size() &&
-        tokens[currentToken].type == CLOSE_PRN) {
-      ++currentToken; /* consume CLOSE_PRN */
-      return expression;
-    } else {
-      /* mismatched parentheses */
-      /* FIX: non exhaustive, works for */
-      throw invalid_argument("Mismatched parentheses.");
-    }
+unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &index) {
+  if (tokens[index].type == NUMBER) {
+    unique_ptr<node> num = make_unique<node>();
+    num -> tok = tokens[index++];
+    return num;
   }
-  /* case: factor : NUMBER */
-  else if (currentToken < tokens.size() &&
-           tokens[currentToken].type == NUMBER) {
-    token numberToken = tokens[currentToken++];
-    return make_unique<node>(numberToken);
-  } else {
-    /* handle invalid factor */
-    throw invalid_argument("Cannot have two consecutive operators.");
-  }
+
+  return parseExpression(tokens, index);
 }
 
 string displayTreeInfix(const unique_ptr<node> &root) {
