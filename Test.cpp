@@ -145,6 +145,9 @@ void parser_tests() {
   assert_block("34 35 3 * +", 
                "34 + 35 * 3", "Parser can parse expressions that require precedence");
 
+  assert_block("5",
+               "((5))", "Parser can disambiguate parentheses");
+
   assert_error("Cannot have consecutive numbers.",
                "34 35 +", "Parser can catch invalid consecutive numbers before operator.");
 
