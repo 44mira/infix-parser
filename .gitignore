@@ -1,6 +1,6 @@
 # ignore executable files
-.exe
-.out
+*.exe
+*.out
 
 # ignore vsc directory
 .vscode/
