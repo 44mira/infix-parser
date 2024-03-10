@@ -88,7 +88,6 @@ void evaluateLoop(void) {
   while (true) {
     try {
       cout << "\nInput an infix expression: ";
-      cin.ignore();
       getline(cin, expr);
       size_t currentToken = 0;
       unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
