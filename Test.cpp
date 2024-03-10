@@ -1,5 +1,6 @@
 
 #include "definitions.h"
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -34,8 +35,6 @@ void assert(bool expr, string msg);
 bool compare_tokens(vector<token> asserted, vector<token> tested);
 
 int main(void) {
-
-  cout << "\n";
 
   lexer_tests();
   parser_tests();
@@ -100,22 +99,32 @@ void lexer_tests() {
          "Lexer can tokenize a complex expression");
 }
 
+/**
+ *
+ */
 #define parse(expr) {                   \
                       currentToken = 0; \
                       tested = displayTreePostfix(parseExpression(lexer(expr), currentToken)); }
+
 #define assert_this(expr) asserted = expr " "
+
 #define assert_eq(msg) assert(asserted == tested, msg)
-#define assert_block(asrt, tst, msg) {                            \
-                                      try {                       \
-                                        assert_this(asrt);        \
-                                        parse(tst);               \
-                                        assert_eq(msg);           \
+
+#define assert_block(asrt, tst, msg) {                                                          \
+                                      try {                                                     \
+                                        assert_this(asrt);                                      \
+                                        parse(tst);                                             \
+                                        assert_eq(msg);                                         \
                                     } catch (...) {assert(false, msg);}}
-#define assert_error(err,expr,msg) {                        \
-                                try {                   \
-                                  parse(expr);          \
-                                  assert(false, msg);   \
-                                } catch (invalid_argument &e) {assert(!strcmp(e.what(), err), msg);}}
+#define assert_error(err,expr,msg) {                                                                      \
+                                try {                                                                     \
+                                  parse(expr);                                                            \
+                                  assert(false, msg);                                                     \
+                                } catch (invalid_argument &e) {                                           \
+                                  char buf[200];                                                          \
+                                  sprintf(buf, "%s\n\t- EXPECTED: %s\n\t- GOT: %s", msg, err, e.what());  \
+                                  assert(!strcmp(e.what(), err), buf);                                    \
+                                }}
 
 void parser_tests() {
   string asserted, tested;
@@ -137,30 +146,30 @@ void parser_tests() {
                "34 + 35 * 3", "Parser can parse expressions that require precedence");
 
   assert_error("Cannot have consecutive numbers.",
-               "34 35 +", "Parser can catch invalid consecutive numbers before operator. EXPECTED: Cannot have consecutive numbers.");
+               "34 35 +", "Parser can catch invalid consecutive numbers before operator.");
 
   assert_error("Cannot have consecutive numbers.",
-               "34 / 31 32", "Parser can catch invalid consecutive numbers after operator. EXPECTED: Cannot have consecutive numbers.");
+               "34 / 31 32", "Parser can catch invalid consecutive numbers after operator.");
 
   assert_error("Stray operator found.",
-               "+", "Parser can catch invalid stray operator. EXPECTED: Stray operator");
+               "+", "Parser can catch invalid stray operator.");
 
   assert_error("Mismatched parentheses.",
-               "4 + 5 * ( 3 + 4", "Parser can catch invalid opening parenthesis. EXPECTED: Mismatched parentheses.");
+               "4 + 5 * ( 3 + 4", "Parser can catch invalid opening parenthesis.");
 
   assert_error("Mismatched parentheses.",
-              "4 + 5 * 3 + 4 )", "Parser can catch invalid closing parenthesis. EXPECTED: Mismatched parentheses.");
+              "4 + 5 * 3 + 4 )", "Parser can catch invalid closing parenthesis.");
 
   assert_error("Cannot have two consecutive operators.",
-               "4 + + 5", "Parser can catch invalid consecutive operators of same precedence. EXPECTED: Cannot have two consecutive operators.");
+               "4 + + 5", "Parser can catch invalid consecutive operators of same precedence.");
 
   assert_error("Cannot have two consecutive operators.",
-               "4 + * 5", "Parser can catch invalid consecutive operators of differing precedence. EXPECTED: Cannot have two consecutive operators.");
+               "4 + * 5", "Parser can catch invalid consecutive operators of differing precedence.");
 
   assert_error("Parentheses multiplication not supported.",
-               "4 ( 5 + 3 )", "Parser can catch invalid number to parentheses. EXPECTED: Parentheses multiplication not supported.");
+               "4 ( 5 + 3 )", "Parser can catch invalid number to parentheses.");
 
   assert_error("Parentheses multiplication not supported.",
-               "(5 + 3) 4", "Parser can catch invalid parentheses to number. EXPECTED: Parentheses multiplication not supported.");
+               "(5 + 3) 4", "Parser can catch invalid parentheses to number.");
   
 }
