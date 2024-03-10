@@ -1,5 +1,7 @@
 #include "definitions.h"
 
+using namespace std;
+
 vector<token> lexer(const string expr) {
   vector<token> tokens;
   for (int i = 0; i < expr.length(); i++) {
@@ -119,8 +121,8 @@ string displayTreeInfix(const unique_ptr<node> &root) {
 void displayTreeInfixHelper(const unique_ptr<node> &root, string &result) {
   if (root) {
     displayTreeInfixHelper(root->left, result);
-    displayTreeInfixHelper(root->right, result);
     result += root->tok.value + " ";
+    displayTreeInfixHelper(root->right, result);
   }
 }
 
