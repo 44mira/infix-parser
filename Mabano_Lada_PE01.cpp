@@ -59,7 +59,6 @@ choice menu(void) {
           "[X] Exit\n"
           "\nChoice: ";
   cin >> ret;
-  cin.ignore(numeric_limits<streamsize>::max(), '\n'); /* ignore the rest of the input stream */
 
   return toupper(ret); /* lowercase versions of P E X should be valid */
 }
