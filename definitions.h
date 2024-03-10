@@ -67,7 +67,7 @@ void programDescription(void);
  * Enter the loop for evaluating expressions.
  * Exit back to `main` on 'X' or invalid expression.
  */
-void evaluateLoop(void);
+void evaluationLoop(void);
 
 /**
  * Converts the string expression to its corresponding `token` structs.

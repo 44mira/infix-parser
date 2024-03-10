@@ -82,7 +82,7 @@ void programDescription(void) {
           "\t\t============================\n\n";
 }
 
-void evaluateLoop(void) {
+void evaluationLoop(void) {
   string expr;
   choice exit;
   while (true) {
