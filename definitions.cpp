@@ -44,8 +44,7 @@ vector<token> lexer(const string expr) {
   return tokens;
 }
 
-unique_ptr<node> parseExpression(const vector<token> &tokens,
-                                 size_t &currentToken) {
+unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentToken) {
   /* expression : term { PRECEDENCE_1 term } . */
   unique_ptr<node> leftOperand = parseTerm(tokens, currentToken);
 
@@ -81,8 +80,7 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
   return leftOperand;
 }
 
-unique_ptr<node> parseFactor(const vector<token> &tokens,
-                             size_t &currentToken) {
+unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) {
   /* case: factor : OPEN_PRN expression CLOSE_PRN */
   if (currentToken < tokens.size() &&
       tokens[currentToken].type == TOKEN_TYPES::OPEN_PRN) {
