@@ -49,7 +49,7 @@ unique_ptr<node> parseExpression(const vector<token> &tokens, size_t &currentTok
   unique_ptr<node> leftOperand = parseTerm(tokens, currentToken);
 
   while (currentToken < tokens.size() &&
-         tokens[currentToken].type == TOKEN_TYPES::PRECEDENCE_1) {
+         tokens[currentToken].type == PRECEDENCE_1) {
     /* get the operation (+|-) */
     token op = tokens[currentToken++];
 
@@ -67,7 +67,7 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
   unique_ptr<node> leftOperand = parseFactor(tokens, currentToken);
 
   while (currentToken < tokens.size() &&
-         tokens[currentToken].type == TOKEN_TYPES::PRECEDENCE_2) {
+         tokens[currentToken].type == PRECEDENCE_2) {
     /* get the operation (*|/|%) */
     token op = tokens[currentToken++];
 
@@ -83,14 +83,14 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
 unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) {
   /* case: factor : OPEN_PRN expression CLOSE_PRN */
   if (currentToken < tokens.size() &&
-      tokens[currentToken].type == TOKEN_TYPES::OPEN_PRN) {
+      tokens[currentToken].type == OPEN_PRN) {
     ++currentToken; /* consume OPEN_PRN token */
 
     unique_ptr<node> expression = parseExpression(tokens, currentToken);
 
     /* valid factor of case */
     if (currentToken < tokens.size() &&
-        tokens[currentToken].type == TOKEN_TYPES::CLOSE_PRN) {
+        tokens[currentToken].type == CLOSE_PRN) {
       ++currentToken; /* consume CLOSE_PRN */
       return expression;
     } else {
@@ -101,7 +101,7 @@ unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) 
   }
   /* case: factor : NUMBER */
   else if (currentToken < tokens.size() &&
-           tokens[currentToken].type == TOKEN_TYPES::NUMBER) {
+           tokens[currentToken].type == NUMBER) {
     token numberToken = tokens[currentToken++];
     return make_unique<node>(numberToken);
   } else {
@@ -123,6 +123,7 @@ void displayTreeInfixHelper(const unique_ptr<node> &root, string &result) {
     result += root->tok.value + " ";
   }
 }
+
 string displayTreePostfix(const unique_ptr<node> &root) {
   string result = "";
   displayTreePostfixHelper(root, result);
