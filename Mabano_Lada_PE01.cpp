@@ -56,7 +56,7 @@ choice menu(void) {
           "[P] Program Description\n"
           "[E] Evaluate Expression(s)\n"
           "[X] Exit\n"
-          "Choice: ";
+          "\nChoice: ";
   cin >> ret;
 
   return toupper(ret); // lowercase versions of P E X should be valid
@@ -75,8 +75,8 @@ void programDescription(void) {
           "- [X] Exit: Terminates the program.\n\n=====\n"
 
           "Work distribution:\n"
-          "Tyrael: Code structure setup, infix to postfix conversion\n"
-          "Sharmaigne: Input validation, postfix expression evaluation\n\n"
+          "Tyrael: code structure setup, grammar, lexer, testing suite\n"
+          "Sharmaigne: input validation, parser, evaluator\n\n"
           "\t\t============================\n\n";
 }
 
@@ -84,89 +84,37 @@ void evaluateLoop(void) {
   string expr;
   choice exit;
   while (true) {
-    cout << "\n Input an infix expression: ";
-    cin.ignore();
-    getline(cin, expr);
-    size_t currentToken = 0;
-    unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
+    try {
+      cout << "\nInput an infix expression: ";
+      cin.ignore();
+      getline(cin, expr);
+      size_t currentToken = 0;
+      unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
-    cout << "Postfix expression: ";
-    displayTreePostfix(root);
+      cout << "Postfix expression: ";
+      displayTreePostfix(root);
 
-    cout << "\nDo you want to evaluate another expression?\n\n"
-            "[X] NO\n"
-            "[other] YES\n"
-            "Choice: ";
+      cout << "\n\nDo you want to evaluate another expression?\n\n"
+              "[X] NO\n"
+              "[other] YES\n"
+              "\nChoice: ";
 
-    cin >> exit;
-    if (toupper(exit) == EXIT)
-      return;
-  }
-}
-
-unique_ptr<node> parseExpression(const vector<token>& tokens, size_t& currentToken) {
-  /* expression -> term { PRECEDENCE_1 term } . */
-  unique_ptr<node> leftOperand = parseTerm(tokens, currentToken);
-
-  while (currentToken < tokens.size() && tokens[currentToken].type == TOKEN_TYPES::PRECEDENCE_1) {
-    /* get the operation (+|-) */
-    token op = tokens[currentToken++];
-
-    unique_ptr<node> rightOperand = parseTerm(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(op);
-    newNode -> left = move(leftOperand);
-    newNode -> right = move(rightOperand);
-    leftOperand = move(newNode);
-  }
-  return leftOperand;
-}
-
-unique_ptr<node> parseTerm(const vector<token>& tokens, size_t& currentToken) {
-  /* term -> factor { PRECEDENCE_2 factor } . */
-  unique_ptr<node> leftOperand = parseFactor(tokens, currentToken);
-
-  while (currentToken < tokens.size() && tokens[currentToken].type == TOKEN_TYPES::PRECEDENCE_2) {
-    /* get the operation (*|/|%) */
-    token op = tokens[currentToken++];
-
-    unique_ptr<node> rightOperand = parseFactor(tokens, currentToken);
-    unique_ptr<node> newNode = make_unique<node>(op);
-    newNode -> left = move(leftOperand);
-    newNode -> right = move(rightOperand);
-    leftOperand = move(newNode);
-  }
-  return leftOperand;
-}
-
-unique_ptr<node> parseFactor(const vector<token>& tokens, size_t& currentToken) {
-  /* case: factor -> OPEN_PRN expression CLOSE_PRN */
-  if (currentToken < tokens.size() && tokens[currentToken].type == TOKEN_TYPES::OPEN_PRN) {
-    ++currentToken; /* consume OPEN_PRN token */
-    
-    unique_ptr<node> expression = parseExpression(tokens, currentToken);
-
-    /* valid factor of case */
-    if (currentToken < tokens.size() && tokens[currentToken].type == TOKEN_TYPES::CLOSE_PRN) {
-      ++currentToken; /* consume CLOSE_PRN */
-      return expression;
-    } else {
-      /* mismatched parentheses */
+      cin >> exit;
+      if (toupper(exit) == EXIT)
+        return;
+    } catch(invalid_argument& e) {
+      cout << "Invalid Input: ";
+      cerr << e.what();
+      cout << "\nPlease try again." << '\n';
     }
-  } 
-  /* case: factor -> NUMBER */
-  else if (currentToken < tokens.size() && tokens[currentToken].type == TOKEN_TYPES::NUMBER) {
-    token numberToken = tokens[currentToken++];
-    return make_unique<node>(numberToken);
-  } else {
-    /* handle invalid factor */
+    
   }
 }
 
 void displayTreeInfix(const unique_ptr<node>& root) {
   if (root) {
     displayTreeInfix(root -> left);
-    /* FIX: value.value is very bad naming lol */
-    cout << root -> value.value << " ";
+    cout << root -> tok.value << " ";
     displayTreeInfix(root -> right);
   }
 }
@@ -175,6 +123,6 @@ void displayTreePostfix(const unique_ptr<node>& root) {
   if (root) {
     displayTreePostfix(root -> left);
     displayTreePostfix(root -> right);
-    cout << root -> value.value << " ";
+    cout << root -> tok.value << " ";
   }
 }

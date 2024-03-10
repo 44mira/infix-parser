@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 using namespace std;
 
@@ -40,11 +41,12 @@ struct token {
  */
 enum NODE_TYPES { NUMERIC, OPERATOR };
 struct node {
-  token value;
+  token tok;
   unique_ptr<node> left;
   unique_ptr<node> right;
 
-  node(token t) : value(t), left(nullptr), right(nullptr) {};
+  /* TO DO: am i really not allowed to use a constructor? remove unique_ptr use */
+  node(token& t) : tok(t), left(nullptr), right(nullptr) {};
 };
 
 /**
