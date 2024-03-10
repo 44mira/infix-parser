@@ -159,4 +159,13 @@ void displayTreePostfixHelper(const unique_ptr<node> &root, vector<token> &outpu
  */
 double evaluatePostfix(const unique_ptr<node> &root);
 
+
+/**
+ * Traverses expression tree and determines if it's valid.
+ * valid: each operator has 2 children, all operands are leaves
+ * 
+ * @param root pointer to the root of the expression tree.
+ * @throws invalid_argument if conditions for validity are not satisfied
+ */
+void isValidExpression(const unique_ptr<node> &root);
 #endif // DEFINITIONS_H

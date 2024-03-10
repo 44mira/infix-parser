@@ -68,8 +68,7 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
   /* term : factor { PRECEDENCE_2 factor } . */
   unique_ptr<node> leftOperand = parseFactor(tokens, currentToken);
 
-  while (currentToken < tokens.size() &&
-         tokens[currentToken].type == PRECEDENCE_2) {
+  while (currentToken < tokens.size() && tokens[currentToken].type == PRECEDENCE_2) {
     /* get the operation (*|/|%) */
     token op = tokens[currentToken++];
 
@@ -84,15 +83,13 @@ unique_ptr<node> parseTerm(const vector<token> &tokens, size_t &currentToken) {
 
 unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) {
   /* case: factor : OPEN_PRN expression CLOSE_PRN */
-  if (currentToken < tokens.size() &&
-      tokens[currentToken].type == OPEN_PRN) {
+  if (currentToken < tokens.size() && tokens[currentToken].type == OPEN_PRN) {
     ++currentToken; /* consume OPEN_PRN token */
 
     unique_ptr<node> expression = parseExpression(tokens, currentToken);
 
     /* valid factor of case */
-    if (currentToken < tokens.size() &&
-        tokens[currentToken].type == CLOSE_PRN) {
+    if (currentToken < tokens.size() && tokens[currentToken].type == CLOSE_PRN) {
       ++currentToken; /* consume CLOSE_PRN */
       return expression;
     } else {
@@ -102,8 +99,7 @@ unique_ptr<node> parseFactor(const vector<token> &tokens, size_t &currentToken) 
     }
   }
   /* case: factor : NUMBER */
-  else if (currentToken < tokens.size() &&
-           tokens[currentToken].type == NUMBER) {
+  else if (currentToken < tokens.size() && tokens[currentToken].type == NUMBER) {
     token numberToken = tokens[currentToken++];
     return make_unique<node>(numberToken);
   } else {
@@ -195,4 +191,20 @@ double evaluatePostfix(const unique_ptr<node> &root) {
 
   /* final result should be at the top of operand stack */
   return operandStack.back();
+}
+
+void isValidExpression(const unique_ptr<node> &root) {
+  if (root) {
+    isValidExpression(root->left);
+    isValidExpression(root->right);
+    /* all operators must have two children */
+    if (root->tok.type == PRECEDENCE_1 or root->tok.type == PRECEDENCE_2)
+      if (!root->left or !root->right)
+        throw invalid_argument("All operators must have two children.");
+
+    /* all operands must be leaves */
+    else if (root->tok.type == NUMBER)
+      if (root->left or root->right)
+        throw invalid_argument("All operands must be leaves.");
+  }
 }

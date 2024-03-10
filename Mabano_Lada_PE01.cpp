@@ -26,6 +26,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include "definitions.cpp"
 
 using namespace std;
 
@@ -92,9 +93,11 @@ void evaluateLoop(void) {
       size_t currentToken = 0;
       unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
+      isValidExpression(root); /* throws invalid_argument if expression is invalid */
+
       cout << "\nPostfix expression: " << displayTreePostfix(root);
       cout << "\nResult of evaluation: ";
-      
+
       try {
         cout << evaluatePostfix(root);
       } catch (invalid_argument& e) {
@@ -110,7 +113,7 @@ void evaluateLoop(void) {
       if (toupper(exit) == EXIT)
         return;
     } catch(invalid_argument& e) {
-      cout << "Invalid Input: ";
+      cout << "Invalid infix expression.";
       cerr << e.what();
       cout << "\nPlease try again." << '\n';
     }
