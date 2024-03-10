@@ -154,6 +154,8 @@ void displayTreePostfixHelper(const unique_ptr<node> &root, vector<token> &outpu
  * 
  * @param root pointer to the root of the expression tree.
  * @return result of the evaluation
+ * 
+ * @throws invalid_argument thrown when attempting to divide by 0 (in / and %)
  */
 double evaluatePostfix(const unique_ptr<node> &root);
 
