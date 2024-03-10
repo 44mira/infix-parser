@@ -89,14 +89,17 @@ void evaluationLoop(void) {
     try {
       cout << "\nInput an infix expression: ";
       getline(cin, expr);
+      vector<token> tokens = lexer(expr);
       size_t currentToken = 0;
-      unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
+      unique_ptr<node> root = parseExpression(tokens, currentToken);
 
+      if (currentToken != tokens.size()) 
+        throw invalid_argument("Mismatch parentheses");
       cout << "\nPostfix expression: " << displayTreePostfix(root);
-      // cout << "\nResult of evaluation: ";
+      cout << "\nResult of evaluation: ";
       
       try {
-        // cout << evaluatePostfix(root);
+        cout << evaluatePostfix(root);
       } catch (invalid_argument& e) {
         cout << e.what();
       }
@@ -110,9 +113,8 @@ void evaluationLoop(void) {
       cin.ignore(1000, '\n');
       if (toupper(exit) == EXIT)
         return;
-    } catch(invalid_argument& e) {
-      cout << "Invalid Input: ";
-      cerr << e.what();
+    } catch(invalid_argument &e) {
+      cout << "Invalid infix expression: ";
       cout << "\nPlease try again." << '\n';
     }
     
