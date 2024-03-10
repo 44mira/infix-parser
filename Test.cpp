@@ -12,10 +12,10 @@ namespace Global {
 };
 
 // Lexer unit tests
-void lexer_tests();
+void lexerTests();
 
 // Parser unit tests
-void parser_tests();
+void parserTests();
 
 /**
  * Asserts an `expr` to be true. Throws an error `msg` otherwise.
@@ -32,12 +32,12 @@ void assert(bool expr, string msg);
  * @param tested the vector to be tested
  * @ret the result of the by-element comparions
  */
-bool compare_tokens(vector<token> asserted, vector<token> tested);
+bool compareTokens(vector<token> asserted, vector<token> tested);
 
 int main(void) {
 
-  lexer_tests();
-  parser_tests();
+  lexerTests();
+  parserTests();
 
   if (!Global::tests_failed.empty())
     cout << "Tests failed:\n" << Global::tests_failed;
@@ -54,7 +54,7 @@ void assert(bool expr, string msg) {
      Global::tests_failed += "\nERROR: Test \"" + msg + "\" failed.\n";
 }
 
-bool compare_tokens(vector<token> asserted, vector<token> tested) {
+bool compareTokens(vector<token> asserted, vector<token> tested) {
   for (size_t i = 0; i < asserted.size(); i++) {
     if (asserted[i].type != tested[i].type ||
         asserted[i].value != tested[i].value)
@@ -63,39 +63,39 @@ bool compare_tokens(vector<token> asserted, vector<token> tested) {
   return true;
 }
 
-void lexer_tests() {
+void lexerTests() {
   vector<token> tested, asserted;
 
   asserted = {{NUMBER, "2"}};
   tested = lexer("2");
-  assert(compare_tokens(asserted, tested),
+  assert(compareTokens(asserted, tested),
          "Lexer can tokenize a single digit");
 
   asserted = {{NUMBER, "420"}};
   tested = lexer("420");
-  assert(compare_tokens(asserted, tested),
+  assert(compareTokens(asserted, tested),
          "Lexer can tokenize a multiple digit number");
 
   asserted = {{PRECEDENCE_1, "+"}};
   tested = lexer("+");
-  assert(compare_tokens(asserted, tested),
+  assert(compareTokens(asserted, tested),
          "Lexer can tokenize an operator");
 
   asserted = {{OPEN_PRN, "("}, {CLOSE_PRN, ")"}};
   tested = lexer("( )");
-  assert(compare_tokens(asserted, tested),
+  assert(compareTokens(asserted, tested),
          "Lexer can tokenize a parentheses and space");
 
   asserted = {{NUMBER, "34"}, {PRECEDENCE_1, "+"}, {NUMBER, "35"}};
   tested = lexer("34 + 35");
-  assert(compare_tokens(asserted, tested),
+  assert(compareTokens(asserted, tested),
          "Lexer can tokenize a basic expression");
 
   asserted = {{NUMBER, "1"},   {PRECEDENCE_1, "-"}, {OPEN_PRN, "("},
               {NUMBER, "5"},   {PRECEDENCE_2, "*"}, {NUMBER, "4"},
               {CLOSE_PRN, ")"}};
   tested = lexer("1-(5*4)");
-  assert(compare_tokens(asserted, tested),
+  assert(compareTokens(asserted, tested),
          "Lexer can tokenize a complex expression");
 }
 
@@ -126,7 +126,7 @@ void lexer_tests() {
                                   assert(!strcmp(e.what(), err), buf);                                    \
                                 }}
 
-void parser_tests() {
+void parserTests() {
   string asserted, tested;
   size_t currentToken;
 
