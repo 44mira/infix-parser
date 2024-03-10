@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <cmath> /* for floor */
 
 using namespace std;
 
@@ -144,8 +145,16 @@ string displayTreePostfix(const unique_ptr<node> &root);
  * Traverses expression tree in postorder.
  *
  * @param root pointer to the root of the expression tree.
- * @param result empty string that gets concatenated with the tokens.
+ * @param outputQueue reference to vector that gets pushed with the tokens.
  */
-void displayTreePostfixHelper(const unique_ptr<node> &root, string &result);
+void displayTreePostfixHelper(const unique_ptr<node> &root, vector<token> &outputQueue);
+
+/**
+ * Evaluates expression tree by postfix.
+ * 
+ * @param root pointer to the root of the expression tree.
+ * @return result of the evaluation
+ */
+double evaluatePostfix(const unique_ptr<node> &root);
 
 #endif // DEFINITIONS_H

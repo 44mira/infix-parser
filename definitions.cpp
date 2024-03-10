@@ -128,14 +128,56 @@ void displayTreeInfixHelper(const unique_ptr<node> &root, string &result) {
 
 string displayTreePostfix(const unique_ptr<node> &root) {
   string result = "";
-  displayTreePostfixHelper(root, result);
+  vector<token> outputQueue;
+  displayTreePostfixHelper(root, outputQueue);
+
+  for (const token& tok : outputQueue) {
+    result += tok.value + " ";
+  }
   return result;
 }
 
-void displayTreePostfixHelper(const unique_ptr<node> &root, string &result) {
+void displayTreePostfixHelper(const unique_ptr<node> &root, vector<token> &outputQueue) {
   if (root) {
-    displayTreePostfixHelper(root->left, result);
-    displayTreePostfixHelper(root->right, result);
-    result += root->tok.value + " ";
+    displayTreePostfixHelper(root->left, outputQueue);
+    outputQueue.push_back(root->tok);
+    displayTreePostfixHelper(root->right, outputQueue);
   }
+}
+
+double evaluatePostfix(const unique_ptr<node> &root) {
+  vector<token> outputQueue;
+  vector<double> operandStack;
+  double firstOperand, secondOperand, opResult;
+
+  displayTreePostfixHelper(root, outputQueue);
+
+  for (const token& tok : outputQueue) {
+    /* if operand, convert to double and push to operand stack */
+    if (tok.type == NUMBER) {
+      operandStack.push_back(stod(tok.value));
+      continue;
+    }
+
+    /* else, it's an operator. evaluate */
+    secondOperand = operandStack.back();
+    operandStack.pop_back();
+    firstOperand = operandStack.back();
+    operandStack.pop_back();
+
+    switch (tok.value[0]) {
+    case '+': opResult = firstOperand + secondOperand; break;
+    case '-': opResult = firstOperand - secondOperand; break;
+    case '*': opResult = firstOperand * secondOperand; break;
+    case '/': opResult = firstOperand / secondOperand; break;
+    /* modulo implementation for double data type */
+    case '%': opResult = firstOperand - floor(firstOperand/secondOperand) * secondOperand; break;
+    }
+
+    /* push result back to operand stack */
+    operandStack.push_back(opResult);
+  }
+
+  /* final result should be at the top of operand stack */
+  return operandStack.back();
 }
