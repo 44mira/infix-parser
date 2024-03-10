@@ -1,6 +1,8 @@
 
 #include "definitions.h"
+#include <cstring>
 #include <iostream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -98,36 +100,67 @@ void lexer_tests() {
          "Lexer can tokenize a complex expression");
 }
 
-#define parse(expr) displayTreePostfix(parseExpression(lexer(expr), currentToken))
-#define assert_this(expr) currentToken = 0; asserted = expr " "
+#define parse(expr) {                   \
+                      currentToken = 0; \
+                      tested = displayTreePostfix(parseExpression(lexer(expr), currentToken)); }
+#define assert_this(expr) asserted = expr " "
 #define assert_eq(msg) assert(asserted == tested, msg)
 #define assert_block(asrt, tst, msg) {                            \
                                       try {                       \
                                         assert_this(asrt);        \
-                                        tested = parse(tst);      \
+                                        parse(tst);               \
                                         assert_eq(msg);           \
                                     } catch (...) {assert(false, msg);}}
-#define assert_error(expr,msg) {                        \
+#define assert_error(err,expr,msg) {                        \
                                 try {                   \
-                                  currentToken = 0;     \
-                                  tested = parse(expr); \
+                                  parse(expr);          \
                                   assert(false, msg);   \
-                                } catch (...) {}}
+                                } catch (invalid_argument &e) {assert(!strcmp(e.what(), err), msg);}}
 
 void parser_tests() {
   string asserted, tested;
   size_t currentToken;
 
-  assert_block("4", "4", "Parser can parse a single digit");
+  assert_block("4",
+               "4", "Parser can parse a single digit");
 
-  assert_block("45", "45", "Parser can parse multiple digits");
+  assert_block("45", 
+               "45", "Parser can parse multiple digits");
 
-  assert_block("34 35 +", "34 + 35", "Parser can parse a simple expression");
+  assert_block("34 35 +", 
+               "34 + 35", "Parser can parse a simple expression");
 
-  assert_block("1 2 3 + *", "1 * (2 + 3)", "Parser can parse an expression with parentheses");
+  assert_block("1 2 3 + *", 
+               "1 * (2 + 3)", "Parser can parse an expression with parentheses");
 
-  assert_block("34 35 3 * +", "34 + 35 * 3", "Parser can parse expressions that require precedence");
+  assert_block("34 35 3 * +", 
+               "34 + 35 * 3", "Parser can parse expressions that require precedence");
 
-  // assert_error("34 35 +", "Parser can catch invalid consecutive numbers");
+  assert_error("Cannot have consecutive numbers.",
+               "34 35 +", "Parser can catch invalid consecutive numbers before operator. EXPECTED: Cannot have consecutive numbers.");
 
+  assert_error("Cannot have consecutive numbers.",
+               "34 / 31 32", "Parser can catch invalid consecutive numbers after operator. EXPECTED: Cannot have consecutive numbers.");
+
+  assert_error("Stray operator found.",
+               "+", "Parser can catch invalid stray operator. EXPECTED: Stray operator");
+
+  assert_error("Mismatched parentheses.",
+               "4 + 5 * ( 3 + 4", "Parser can catch invalid opening parenthesis. EXPECTED: Mismatched parentheses.");
+
+  assert_error("Mismatched parentheses.",
+              "4 + 5 * 3 + 4 )", "Parser can catch invalid closing parenthesis. EXPECTED: Mismatched parentheses.");
+
+  assert_error("Cannot have two consecutive operators.",
+               "4 + + 5", "Parser can catch invalid consecutive operators of same precedence. EXPECTED: Cannot have two consecutive operators.");
+
+  assert_error("Cannot have two consecutive operators.",
+               "4 + * 5", "Parser can catch invalid consecutive operators of differing precedence. EXPECTED: Cannot have two consecutive operators.");
+
+  assert_error("Parentheses multiplication not supported.",
+               "4 ( 5 + 3 )", "Parser can catch invalid number to parentheses. EXPECTED: Parentheses multiplication not supported.");
+
+  assert_error("Parentheses multiplication not supported.",
+               "(5 + 3) 4", "Parser can catch invalid parentheses to number. EXPECTED: Parentheses multiplication not supported.");
+  
 }
