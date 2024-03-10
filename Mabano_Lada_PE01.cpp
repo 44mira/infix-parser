@@ -24,6 +24,7 @@
 #include <cctype>
 #include <iostream>
 #include <string>
+#include <memory>
 
 using namespace std;
 
@@ -55,7 +56,7 @@ choice menu(void) {
           "[P] Program Description\n"
           "[E] Evaluate Expression(s)\n"
           "[X] Exit\n"
-          "Choice: ";
+          "\nChoice: ";
   cin >> ret;
 
   return toupper(ret); // lowercase versions of P E X should be valid
@@ -74,8 +75,8 @@ void programDescription(void) {
           "- [X] Exit: Terminates the program.\n\n=====\n"
 
           "Work distribution:\n"
-          "Tyrael: Code structure setup, infix to postfix conversion\n"
-          "Sharmaigne: Input validation, postfix expression evaluation\n\n"
+          "Tyrael: code structure setup, grammar, lexer, testing suite\n"
+          "Sharmaigne: input validation, parser, evaluator\n\n"
           "\t\t============================\n\n";
 }
 
@@ -83,19 +84,29 @@ void evaluateLoop(void) {
   string expr;
   choice exit;
   while (true) {
-    cout << "\n Input an infix expression: ";
-    cin.ignore();
-    getline(cin, expr);
+    try {
+      cout << "\nInput an infix expression: ";
+      cin.ignore();
+      getline(cin, expr);
+      size_t currentToken = 0;
+      unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
-    // TODO: Parser
+      cout << "\nPostfix expression: ";
+      cout << displayTreePostfix(root);
 
-    cout << "\nDo you want to evaluate another expression?\n\n"
-            "[X] NO\n"
-            "[other] YES\n"
-            "Choice: ";
+      cout << "\n\nDo you want to evaluate another expression?\n\n"
+              "[X] NO\n"
+              "[other] YES\n"
+              "\nChoice: ";
 
-    cin >> exit;
-    if (toupper(exit) == EXIT)
-      return;
+      cin >> exit;
+      if (toupper(exit) == EXIT)
+        return;
+    } catch(invalid_argument& e) {
+      cout << "Invalid Input: ";
+      cerr << e.what();
+      cout << "\nPlease try again." << '\n';
+    }
+    
   }
 }
