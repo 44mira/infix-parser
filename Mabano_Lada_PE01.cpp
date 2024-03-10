@@ -38,7 +38,7 @@ int main(void) {
       programDescription();
       break;
     case EVALUATE:
-      evaluateLoop();
+      evaluationLoop();
       break;
     case EXIT:
       running = false;
@@ -68,14 +68,14 @@ void programDescription(void) {
   cout << "\n\n\t\t==== PROGRAM DESCRIPTION ====\n\n"
           "Legolas Tyrael B. Lada       | 2022-04734\n"
           "Sharmaigne Angelie C. Mabano | 2022-03464\n"
-          "March 05, 2024 - March 09, 2024\n=====\nMenu Descriptions:\n\n"
-
+          "March 05, 2024 - March 09, 2024\n=====\n"
+          "Menu Descriptions:\n\n"
           "- [P] Program Description: Prints out the program description to "
           "stdout.\n"
           "- [E] Evaluate Expression(s): Takes an infix expression as input "
           "and displays its equivalent postfix expression and its result.\n"
-          "- [X] Exit: Terminates the program.\n\n=====\n"
-
+          "- [X] Exit: Terminates the program.\n"
+          "\n=====\n"
           "Work distribution:\n"
           "Tyrael: code structure setup, grammar, lexer, testing suite\n"
           "Sharmaigne: input validation, parser, evaluator\n\n"

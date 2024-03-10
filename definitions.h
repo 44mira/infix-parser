@@ -81,7 +81,20 @@ void evaluationLoop(void);
  */
 vector<token> lexer(const string expr);
 
-/* TO DO: WRITE PARSER FUNCTIONS DECLARATIONS HERE */
+/* TODO: WRITE PARSER FUNCTIONS DECLARATIONS HERE */
+
+/**
+ * Attempt to parse based on the following grammar rule:
+ *
+ * > expression : ( term { PRECEDENCE_1 term } ) .
+ *
+ * @param tokens The tokens to be parsed
+ * @param index The current index used in recursion
+ * @return the expression node to be used in the AST
+ * 
+ * @throws 
+ */
+// unique_ptr<node> parseExpression(vector<token> &tokens, size_t &index);
 
 /**
  * Returns postfix expression as a string.

@@ -46,7 +46,7 @@ vector<token> lexer(const string expr) {
   return tokens;
 }
 
-/* TO DO: WRITE PARSER FUNCTIONS DEFINITIONS HERE */
+/* TODO: WRITE PARSER FUNCTIONS DEFINITIONS HERE */
 
 
 string displayTreeInfix(const unique_ptr<node> &root) {
