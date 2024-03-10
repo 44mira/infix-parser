@@ -1,7 +1,6 @@
 
 #include "definitions.h"
 #include <iostream>
-#include <stdexcept>
 
 using namespace std;
 
@@ -99,31 +98,36 @@ void lexer_tests() {
          "Lexer can tokenize a complex expression");
 }
 
-#define parse(expr) tested = displayTreePostfix(parseExpression(lexer(expr), currentToken))
-#define assert_block(block) try {}
+#define parse(expr) displayTreePostfix(parseExpression(lexer(expr), currentToken))
 #define assert_this(expr) currentToken = 0; asserted = expr " "
 #define assert_eq(msg) assert(asserted == tested, msg)
+#define assert_block(asrt, tst, msg) {                            \
+                                      try {                       \
+                                        assert_this(asrt);        \
+                                        tested = parse(tst);      \
+                                        assert_eq(msg);           \
+                                    } catch (...) {assert(false, msg);}}
+#define assert_error(expr,msg) {                        \
+                                try {                   \
+                                  currentToken = 0;     \
+                                  tested = parse(expr); \
+                                  assert(false, msg);   \
+                                } catch (...) {}}
 
 void parser_tests() {
   string asserted, tested;
   size_t currentToken;
 
-  assert_this("4");
-  parse("4");
-  assert_eq("Parser can parse a single digit");
+  assert_block("4", "4", "Parser can parse a single digit");
 
-  assert_this("45");
-  parse("45");
-  assert_eq("Parser can parse multiple digits");
+  assert_block("45", "45", "Parser can parse multiple digits");
 
-  assert_this("34 35 +");
-  parse("34 + 35");
-  assert_eq("Parser can parse a simple expression");
+  assert_block("34 35 +", "34 + 35", "Parser can parse a simple expression");
 
-  // assert_this("1 - ( 5 * 4 )");
-  // parse("1 - ( 5 + 4 )");
-  // assert_eq("Parser can parse expressions with parentheses");
+  assert_block("1 2 3 + *", "1 * (2 + 3)", "Parser can parse an expression with parentheses");
 
-  // parse("34 + 35 * 3");
+  assert_block("34 35 3 * +", "34 + 35 * 3", "Parser can parse expressions that require precedence");
+
+  // assert_error("34 35 +", "Parser can catch invalid consecutive numbers");
 
 }
