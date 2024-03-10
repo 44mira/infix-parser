@@ -59,8 +59,9 @@ choice menu(void) {
           "[X] Exit\n"
           "\nChoice: ";
   cin >> ret;
+  cin.ignore(numeric_limits<streamsize>::max(), '\n'); /* ignore the rest of the input stream */
 
-  return toupper(ret); // lowercase versions of P E X should be valid
+  return toupper(ret); /* lowercase versions of P E X should be valid */
 }
 
 void programDescription(void) {
@@ -93,7 +94,13 @@ void evaluateLoop(void) {
       unique_ptr<node> root = parseExpression(lexer(expr), currentToken);
 
       cout << "\nPostfix expression: " << displayTreePostfix(root);
-      cout << "\nResult of evaluation: " << evaluatePostfix(root);
+      cout << "\nResult of evaluation: ";
+      
+      try {
+        cout << evaluatePostfix(root);
+      } catch (invalid_argument& e) {
+        cout << e.what();
+      }
 
       cout << "\n\nDo you want to evaluate another expression?\n\n"
               "[X] NO\n"

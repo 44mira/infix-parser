@@ -3,4 +3,4 @@
 *.out
 
 # ignore vsc directory
-.vscode/
+.vscode/*

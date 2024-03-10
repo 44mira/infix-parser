@@ -140,8 +140,8 @@ string displayTreePostfix(const unique_ptr<node> &root) {
 void displayTreePostfixHelper(const unique_ptr<node> &root, vector<token> &outputQueue) {
   if (root) {
     displayTreePostfixHelper(root->left, outputQueue);
-    outputQueue.push_back(root->tok);
     displayTreePostfixHelper(root->right, outputQueue);
+    outputQueue.push_back(root->tok);
   }
 }
 
@@ -166,12 +166,27 @@ double evaluatePostfix(const unique_ptr<node> &root) {
     operandStack.pop_back();
 
     switch (tok.value[0]) {
-    case '+': opResult = firstOperand + secondOperand; break;
-    case '-': opResult = firstOperand - secondOperand; break;
-    case '*': opResult = firstOperand * secondOperand; break;
-    case '/': opResult = firstOperand / secondOperand; break;
+    case '+': 
+      opResult = firstOperand + secondOperand;
+      break;
+    case '-': 
+      opResult = firstOperand - secondOperand; 
+      break;
+    case '*': 
+      opResult = firstOperand * secondOperand; 
+      break;
+    case '/': 
+      if (secondOperand == 0)
+        throw invalid_argument("undefined");
+        
+      opResult = firstOperand / secondOperand; 
+      break;
     /* modulo implementation for double data type */
-    case '%': opResult = firstOperand - floor(firstOperand/secondOperand) * secondOperand; break;
+    case '%': 
+      if (secondOperand == 0)
+        throw invalid_argument("undefined");
+      opResult = firstOperand - floor(firstOperand/secondOperand) * secondOperand; 
+      break;
     }
 
     /* push result back to operand stack */
