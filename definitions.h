@@ -99,7 +99,7 @@ unique_ptr<node> parseTerm(const vector<token>& tokens, size_t& currentToken);
 
 /**
  * Parses an expression based on the grammar rule: 
- * factor : NUMBER | "(" expression ")" .
+ * factor : NUMBER | OPEN_PRN expression CLOSE_PRN .
  * 
  * @param tokens The vector of tokens representing the input expression
  * @param currentToken Reference to the index of the current token being processed
@@ -108,17 +108,35 @@ unique_ptr<node> parseTerm(const vector<token>& tokens, size_t& currentToken);
 unique_ptr<node> parseFactor(const vector<token>& tokens, size_t& currentToken);
 
 /**
- * Print inorder traversal of the expression tree.
+ * Returns postfix expression as a string.
  * 
  * @param root pointer to the root of the expression tree.
+ * @return infix expression as a string (eg. "2 + 5")
  */
-void displayTreeInfix(const unique_ptr<node>& root);
+string displayTreeInfix(const unique_ptr<node>& root);
+
+/** 
+ * Traverses expression tree inorder.
+ * 
+ * @param root pointer to the root of the expression tree.
+ * @param result empty string that gets concatenated with the tokens.
+ */
+void displayTreeInfixHelper(const unique_ptr<node>& root, string& result);
 
 /**
- * Print postorder traversal of the expression tree.
+ * Returns postfix expression as a string.
  * 
  * @param root pointer to the root of the expression tree.
+ * @return postfix expression as a string (eg. "2 5 +")
  */
-void displayTreePostfix(const unique_ptr<node>& root);
+string displayTreePostfix(const unique_ptr<node>& root);
+
+/** 
+ * Traverses expression tree in postorder.
+ * 
+ * @param root pointer to the root of the expression tree.
+ * @param result empty string that gets concatenated with the tokens.
+ */
+void displayTreePostfixHelper(const unique_ptr<node>& root, string& result);
 
 #endif // DEFINITIONS_H
