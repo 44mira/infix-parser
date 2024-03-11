@@ -77,8 +77,6 @@ void evaluationLoop(void);
  */
 vector<token> lexer(const string expr);
 
-/* TODO: WRITE PARSER FUNCTIONS DECLARATIONS HERE */
-
 /**
  * Attempt to parse based on the following grammar rule:
  *
