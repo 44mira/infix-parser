@@ -1,4 +1,4 @@
-/**
+  /**
  * Legolas Tyrael B. Lada | 2022-04734
  * Sharmaigne Angelie C. Mabano | 2022-03464
  * 2-BSCS
@@ -72,7 +72,8 @@ void programDescription(void) {
           "Menu Descriptions:\n\n"
           "- [P] Program Description: Prints out the program description to "
           "stdout.\n"
-          "- [E] Evaluate Expression(s): Takes an infix expression as input "
+          "- [E] Evaluate Expression(s): Enters loop to evaluate expressions.\n"
+          "Each iteration takes an infix expression as input "
           "and displays its equivalent postfix expression and its result.\n"
           "- [X] Exit: Terminates the program.\n"
           "\n=====\n"
